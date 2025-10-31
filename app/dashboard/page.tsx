@@ -6,7 +6,7 @@ function dashboard() {
     <>
       <Navbar />
       <div className="h-dvh w-full">
-        <div className="flex min-h-screen items-center justify-center">
+        <div className="flex h-full items-center justify-center">
           <h1 className="text-3xl font-bold cursor-default">Dashboard</h1>
         </div>
       </div>
