@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "./ui/button";
 
 export default function Navbar() {
   const router = useRouter();
@@ -26,15 +27,18 @@ export default function Navbar() {
   };
   return (
     <>
-      <div className="w-full p-3 fixed start-0 top-0 flex justify-between bg-[#171616] ">
+      <div className="w-full p-3 fixed start-0 top-0 flex justify-between bg-[#171616]">
         <h1 className="text-2xl font-bold text-amber-50 cursor-default">
           jamn!
-        </h1>{" "}
+        </h1>
         <AlertDialog>
           <AlertDialogTrigger asChild className="cursor-pointer">
-            <button className="bg-green-500 text-white py-1 px-3 cursor-pointer ">
+            <Button
+              variant={"destructive"}
+              className="rounded-none cursor-pointer font-bold"
+            >
               Logout
-            </button>
+            </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-none">
             <AlertDialogHeader>

@@ -5,18 +5,22 @@ import { auth } from "@/lib/firebase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { set } from "firebase/database";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/dashboard");
     } catch (error: any) {
@@ -55,12 +59,13 @@ export default function LoginPage() {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </span>
           </div>
-          <button
+          <Button
+            className="bg-green-500 cursor-pointer rounded-none hover:bg-green-600"
+            disabled={loading}
             type="submit"
-            className="bg-green-500 text-white py-2 px-3 cursor-pointer"
           >
-            Login
-          </button>
+            {loading ? "Logging In..." : "Login"}
+          </Button>
           <div className="text-sm text-center">
             <span className="cursor-default">New Here?</span>
             <Link href="/register" className="text-amber-50 underline ml-1">

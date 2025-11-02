@@ -14,6 +14,9 @@ export default function AuthWrapper({
 
   useEffect(() => {
     if (!loading) {
+      const isNewUser =
+        typeof window !== "undefined" && localStorage.getItem("newUser");
+
       // If not logged in → redirect to login page
       if (!user && pathname !== "/login" && pathname !== "/register") {
         router.replace("/login");
@@ -21,9 +24,14 @@ export default function AuthWrapper({
       // If logged in → prevent access to login or signup
       else if (
         user &&
+        !isNewUser &&
         (pathname === "/login" || pathname === "/register" || pathname === "/")
       ) {
         router.replace("/dashboard");
+      }
+
+      if (pathname === "/user-info") {
+        localStorage.removeItem("newUser");
       }
     }
   }, [user, loading, pathname, router]);
