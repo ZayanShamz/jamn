@@ -27,7 +27,7 @@ export default function Navbar() {
   };
   return (
     <>
-      <div className="w-full p-3 fixed start-0 top-0 flex justify-between bg-[#171616]">
+      <div className="w-full p-3 fixed z-50 start-0 top-0 flex justify-between bg-[#171616]">
         <h1 className="text-2xl font-bold text-amber-50 cursor-default">
           jamn!
         </h1>
@@ -42,10 +42,10 @@ export default function Navbar() {
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-none">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-xl">
+              <AlertDialogTitle className="text-xl cursor-default">
                 Are you sure?
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-md text-amber-50">
+              <AlertDialogDescription className="text-md dark:text-amber-50 cursor-default">
                 You will be logged out of your account. This action cannot be
                 undone.
               </AlertDialogDescription>

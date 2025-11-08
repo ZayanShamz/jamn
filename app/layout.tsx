@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthWrapper from "@/components/AuthWrapper";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "jamn!",
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthWrapper>{children}</AuthWrapper>
+        <AuthWrapper>
+          {children}
+          <Toaster richColors position="bottom-left" />
+        </AuthWrapper>
       </body>
     </html>
   );
