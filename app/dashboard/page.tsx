@@ -1,5 +1,7 @@
 "use client";
-import { fetchUserJobs, Job } from "@/lib/firebaseUtils";
+
+import type { Job } from "@/lib/types";
+import { fetchUserJobs } from "@/lib/firebaseUtils";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";

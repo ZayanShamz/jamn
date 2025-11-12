@@ -1,5 +1,6 @@
 // lib/firebaseUtils.ts
 import { auth, db } from "./firebase";
+import type { Job } from "@/lib/types";
 import {
   collection,
   query,
@@ -11,26 +12,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 
-// === TYPES ===
-export interface Job {
-  id: string;
-  job_title: string;
-  company: string;
-  location: string;
-  work_arrangement: string;
-  employment_type: string;
-  job_description: string;
-  responsibilities: string;
-  requirements: string;
-  salary: string;
-  applied_date: string;
-  platform: string;
-  source_url: string;
-  user_notes: string;
-  status: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-}
+// Job type is defined in lib/types.ts
 
 // job fetch function
 export async function fetchUserJobs(): Promise<Job[]> {

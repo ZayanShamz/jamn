@@ -36,38 +36,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { saveJob } from "@/lib/firebaseUtils";
+import type { ExtractedJob } from "@/lib/types";
 
 interface JobSubmitDialogProps {
-  jobData?: {
-    job_title: string;
-    company: string;
-    location: string;
-    work_arrangement: string;
-    employment_type: string;
-    job_description: string;
-    responsibilities: string;
-    requirements: string;
-    salary: string;
-  };
+  jobData?: ExtractedJob;
+  onClose: () => void;
 }
 
-export default function JobSubmitDialog({
-  jobData,
-  onClose,
-}: {
-  jobData?: {
-    job_title: string;
-    company: string;
-    location: string;
-    work_arrangement: string;
-    employment_type: string;
-    job_description: string;
-    responsibilities: string;
-    requirements: string;
-    salary: string;
-  };
-  onClose: () => void;
-}) {
+export default function JobSubmitDialog({ jobData, onClose }: JobSubmitDialogProps) {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({

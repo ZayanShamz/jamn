@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import type { ExtractedJob } from "@/lib/types";
 
 // Initialize OpenAI client with Gemini compatibility
 const openai = new OpenAI({
@@ -7,18 +8,7 @@ const openai = new OpenAI({
   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
 });
 
-interface JobExtraction {
-  job: {
-    job_title: string;
-    company: string;
-    location: string;
-    work_arrangement: string;
-    employment_type: string;
-    full_description: string;
-    requirements: string;
-    salary: string;
-  };
-}
+// Uses shared ExtractedJob type from lib/types
 
 const SYSTEM_PROMPT = `
 You are an expert job data extractor. Extract key details from the job posting text provided by the user.
