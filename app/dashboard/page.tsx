@@ -40,11 +40,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import JobSubmitDialog from "@/components/JobSubmitDialog";
-import { useKeyboardAdjustment } from "@/hooks/useKeyboardAdjustment";
 
 export default function dashboard() {
-  useKeyboardAdjustment();
-
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -192,15 +189,15 @@ export default function dashboard() {
                   <DialogTrigger asChild>
                     <Button className="rounded-none">Add Your Job</Button>
                   </DialogTrigger>
+                  {/* tried adding max-h-[85dvh] overflow-y-auto - but no use */}
                   <DialogContent
                     className="bg-[#f8f7f7] dark:bg-[#171616] border-[#2f2e2e] rounded-none
-                  max-h-[85dvh] overflow-y-auto top-[50%] translate-y-[-50%]
-    [scrollbar-width:thin]
-    [scrollbar-color:#d1d5db_transparent]"
+                    max-h-[calc(100vh-20px)] overflow-y-auto! p-0
+                  "
                   >
                     <form onSubmit={handleExtract}>
-                      <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold cursor-default">
+                      <DialogHeader className="px-6">
+                        <DialogTitle className="text-2xl font-bold cursor-default mt-4">
                           Get Job Details
                         </DialogTitle>
                         <DialogDescription className="text-sm cursor-default">
@@ -209,28 +206,30 @@ export default function dashboard() {
                         </DialogDescription>
                       </DialogHeader>
 
-                      <Textarea
-                        placeholder="Paste the job details here."
-                        className="bg-[#ffff] dark:bg-[#2f2e2e] resize-none mt-3 overflow-auto leading-6 rounded-none min-h-20 max-h-37
+                      <div className=" p-6">
+                        <Textarea
+                          placeholder="Paste the job details here."
+                          className="bg-[#ffff] dark:bg-[#2f2e2e] resize-none mt-3 overflow-auto leading-6 rounded-none min-h-20 max-h-37
                             [scrollbar-width:thin]
                             [scrollbar-color:#d1d5db_transparent] 
                             [&::-webkit-scrollbar]:w-1.5 
                             [&::-webkit-scrollbar-thumb]:rounded-full 
                             [&::-webkit-scrollbar-thumb]:bg-gray-300 
                             hover:[&::-webkit-scrollbar-thumb]:bg-gray-400"
-                        value={jobInfo}
-                        onChange={(e) => setJobInfo(e.target.value)}
-                      />
-                      <span className="text-sm text-gray-500 mt-2">
-                        or{" "}
-                        <span
-                          className="text-blue-500 underline underline-offset-2 cursor-pointer"
-                          onClick={handleManualAdd}
-                        >
-                          add manually
+                          value={jobInfo}
+                          onChange={(e) => setJobInfo(e.target.value)}
+                        />
+                        <span className="text-sm text-gray-500 mt-2">
+                          or{" "}
+                          <span
+                            className="text-blue-500 underline underline-offset-2 cursor-pointer"
+                            onClick={handleManualAdd}
+                          >
+                            add manually
+                          </span>
                         </span>
-                      </span>
-                      <DialogFooter className="justify-end mt-4 gap-4 flex-row!">
+                      </div>
+                      <DialogFooter className="justify-end gap-4 flex-row! px-6 pb-6">
                         <DialogClose asChild>
                           <Button
                             variant="outline"
