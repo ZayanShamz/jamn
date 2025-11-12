@@ -40,8 +40,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import JobSubmitDialog from "@/components/JobSubmitDialog";
+import { useKeyboardAdjustment } from "@/hooks/useKeyboardAdjustment";
 
 export default function dashboard() {
+  useKeyboardAdjustment();
+
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -122,6 +125,14 @@ export default function dashboard() {
       setExtracting(false);
     }
   };
+
+  // Manual Job Addition
+  const handleManualAdd = () => {
+    setExtractedJobData(null);
+    setShowAddJobDialog(false);
+    setShowJobSubmitDialog(true);
+    setJobInfo("");
+  };
   // ------------------------------------
 
   const handleJobSaved = async () => {
@@ -181,7 +192,12 @@ export default function dashboard() {
                   <DialogTrigger asChild>
                     <Button className="rounded-none">Add Your Job</Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-[#f8f7f7] dark:bg-[#171616] border-[#2f2e2e] rounded-none">
+                  <DialogContent
+                    className="bg-[#f8f7f7] dark:bg-[#171616] border-[#2f2e2e] rounded-none
+                  max-h-[85dvh] overflow-y-auto top-[50%] translate-y-[-50%]
+    [scrollbar-width:thin]
+    [scrollbar-color:#d1d5db_transparent]"
+                  >
                     <form onSubmit={handleExtract}>
                       <DialogHeader>
                         <DialogTitle className="text-2xl font-bold cursor-default">
@@ -194,7 +210,7 @@ export default function dashboard() {
                       </DialogHeader>
 
                       <Textarea
-                        placeholder="Type your message here."
+                        placeholder="Paste the job details here."
                         className="bg-[#ffff] dark:bg-[#2f2e2e] resize-none mt-3 overflow-auto leading-6 rounded-none min-h-20 max-h-37
                             [scrollbar-width:thin]
                             [scrollbar-color:#d1d5db_transparent] 
@@ -205,6 +221,15 @@ export default function dashboard() {
                         value={jobInfo}
                         onChange={(e) => setJobInfo(e.target.value)}
                       />
+                      <span className="text-sm text-gray-500 mt-2">
+                        or{" "}
+                        <span
+                          className="text-blue-500 underline underline-offset-2 cursor-pointer"
+                          onClick={handleManualAdd}
+                        >
+                          add manually
+                        </span>
+                      </span>
                       <DialogFooter className="justify-end mt-4 gap-4 flex-row!">
                         <DialogClose asChild>
                           <Button
