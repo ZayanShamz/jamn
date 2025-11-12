@@ -1,56 +1,65 @@
+"use client";
+
+import { useState } from "react";
+import { X } from "lucide-react";
+import { CustomTextarea } from "@/components/CustomTextArea";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 export default function TestPage() {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Dialog>
-        <form>
-          <DialogTrigger asChild>
-            <Button variant="outline">Open Dialog</Button>
-          </DialogTrigger>
-          <DialogContent className="bg-[#f8f7f7] dark:bg-[#171616] border-[#2f2e2e] rounded-none max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Edit profile</DialogTitle>
-              <DialogDescription>
-                Make changes to your profile here. Click save when you&apos;re
-                done.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-3">
-                <Label htmlFor="name-1">Name</Label>
-                <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="username-1">Username</Label>
-                <Input
-                  id="username-1"
-                  name="username"
-                  defaultValue="@peduarte"
-                />
-              </div>
+      <button
+        onClick={() => setOpen(true)}
+        className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white shadow-md transition hover:bg-blue-700"
+      >
+        Open Modal
+      </button>
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* ---------- Modal ---------- */}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className={`
+              relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl
+              max-h-[90dvh] overflow-y-auto
+            `}
+          >
+            {/* Close button (top-right) */}
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute right-3 top-3 rounded-full p-1 text-gray-500 transition hover:bg-gray-100"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Title */}
+            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+              Modal Title
+            </h2>
+
+            {/* Placeholder for future content */}
+            <p className="text-gray-600">Add your form, textarea, etc. here.</p>
+            <div>
+              <Textarea placeholder="enth" />
             </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="submit">Save changes</Button>
-            </DialogFooter>
-          </DialogContent>
-        </form>
-      </Dialog>
+
+            {/* footer */}
+            <div className="flex justify-end mt-3">
+              <Button onClick={() => setOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
