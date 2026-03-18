@@ -12,9 +12,10 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { toast } from "sonner";
+import { AuthCard } from "@/components/auth/AuthCard";
 
-export default function page() {
+export default function UserInfoPage() {
   const [username, setUsername] = useState("");
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(false);
@@ -45,7 +46,7 @@ export default function page() {
     e.preventDefault();
 
     if (!isAvailable) {
-      alert("Username is already taken");
+      toast.error("Username is already taken");
       return;
     }
 
@@ -64,7 +65,7 @@ export default function page() {
 
       router.push("/dashboard");
     } catch (error: any) {
-      alert(error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -72,11 +73,8 @@ export default function page() {
 
   return (
     <>
-      <div className="h-svh w-full   flex items-center justify-center">
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col p-8 border border-amber-50 gap-3"
-        >
+      <AuthCard>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <h2 className="text-xl">Create your username</h2>
           <input
             type="text"
@@ -100,14 +98,8 @@ export default function page() {
           >
             {loading ? "Submitting..." : "Submit"}
           </Button>
-          <Link
-            href="/dashboard"
-            className="text-sm text-center text-gray-400 underline mt-2"
-          >
-            skip
-          </Link>
         </form>
-      </div>
+      </AuthCard>
     </>
   );
 }

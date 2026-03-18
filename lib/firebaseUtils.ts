@@ -12,8 +12,6 @@ import {
   Timestamp,
 } from "firebase/firestore";
 
-// Job type is defined in lib/types.ts
-
 // job fetch function
 export async function fetchUserJobs(): Promise<Job[]> {
   try {

@@ -13,8 +13,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
+import { Plus } from "lucide-react";
 
-export default function Navbar() {
+interface NavbarProps {
+  onNewJob?: () => void;
+}
+
+export default function Navbar({ onNewJob }: NavbarProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -31,6 +36,9 @@ export default function Navbar() {
         <h1 className="text-2xl font-bold text-amber-50 cursor-default">
           jamn!
         </h1>
+        <Button className="rounded-none" onClick={onNewJob}>
+          New Job <Plus />
+        </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild className="cursor-pointer">
             <Button
@@ -40,25 +48,24 @@ export default function Navbar() {
               Logout
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="rounded-none">
+
+          <AlertDialogContent className="rounded-none gap-6">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-xl cursor-default">
+              <AlertDialogTitle className="text-xl text-center cursor-default py-3">
                 Are you sure?
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-md dark:text-amber-50 cursor-default">
-                You will be logged out of your account. This action cannot be
-                undone.
+              <AlertDialogDescription className="py-3 text-md text-center dark:text-gray-400 cursor-default">
+                You will be logged out of your account. You'll have to log in
+                again to access your dashboard and job applications.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="cursor-pointer rounded-none">
+              <AlertDialogCancel className="cursor-pointer rounded-none dark:hover:text-white">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 className="cursor-pointer text-white bg-red-500 hover:bg-red-800 rounded-none"
-                onClick={() => {
-                  handleLogout();
-                }}
+                onClick={handleLogout}
               >
                 Logout
               </AlertDialogAction>
