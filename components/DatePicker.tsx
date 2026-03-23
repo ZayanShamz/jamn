@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { CalendarIcon, ChevronDownIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -12,6 +11,7 @@ import {
 import { format, parse } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Label } from "./ui/label";
+import { useEffect } from "react";
 
 interface DatePickerProps {
   value?: string;
@@ -29,9 +29,15 @@ export function DatePicker({
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
 
+  useEffect(() => {
+    if (!value) {
+      onChange?.(format(new Date(), "dd-MM-yyyy"));
+    }
+  }, []);
+
   const selectedDate = value
     ? parse(value, "dd-MM-yyyy", new Date())
-    : undefined;
+    : new Date();
 
   const displayDate =
     value && selectedDate && !isNaN(selectedDate.getTime())
@@ -55,19 +61,27 @@ export function DatePicker({
           <Label htmlFor="applied-date" className="text-muted-foreground mb-1">
             Select the date you applied.
           </Label>
-          <Button
+          <button
+            type="button"
+            id="applied-date"
             className={cn(
-              "w-full justify-between text-left font-normal rounded-none text-black bg-white border focus:bg-white hover:bg-white",
+              "h-9 w-full min-w-0 border px-3 text-base md:text-sm shadow-xs rounded-none ",
+              "bg-white py-1 dark:bg-input/30 border-input",
+              "transition-[color,box-shadow] outline-none ",
+              "focus:border-2 focus:border-[#C7C7C7] focus:ring-0 dark:focus:border-primary/70 focus:rounded-md",
+              "",
+              // Layout for the date + icon
+              "flex items-center justify-between text-left font-normal",
               !value && "text-muted-foreground",
-              className
+              className,
             )}
           >
             {displayDate}
             <CalendarIcon className="text-gray-400" />
-          </Button>
+          </button>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+      <PopoverContent className="w-auto overflow-hidden p-0" align="center">
         <Calendar
           mode="single"
           selected={selectedDate}
