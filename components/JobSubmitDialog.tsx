@@ -37,13 +37,17 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { saveJob } from "@/lib/firebaseUtils";
 import type { ExtractedJob } from "@/lib/types";
+import { isKnownPlatform } from "@/lib/suggestions";
 
 interface JobSubmitDialogProps {
   jobData?: ExtractedJob;
   onClose: () => void;
 }
 
-export default function JobSubmitDialog({ jobData, onClose }: JobSubmitDialogProps) {
+export default function JobSubmitDialog({
+  jobData,
+  onClose,
+}: JobSubmitDialogProps) {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -87,7 +91,6 @@ export default function JobSubmitDialog({ jobData, onClose }: JobSubmitDialogPro
   };
 
   const handleSubmit = async () => {
-    // --- 1. Validation ---
     if (formData.source_url && !/^https?:\/\//i.test(formData.source_url)) {
       alert("Please enter a valid URL (http:// or https://)");
       return;
@@ -96,6 +99,14 @@ export default function JobSubmitDialog({ jobData, onClose }: JobSubmitDialogPro
     if (!formData.job_title.trim() || !formData.company.trim()) {
       alert("Job Title and Company are required.");
       return;
+    }
+
+    if (formData.platform.trim() && !isKnownPlatform(formData.platform)) {
+      fetch("/api/log-suggestion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "platform", value: formData.platform }),
+      }).catch(() => {});
     }
 
     setLoading(true);

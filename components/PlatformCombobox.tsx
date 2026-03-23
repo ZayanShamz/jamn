@@ -1,30 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import {
-  Command,
-  CommandList,
-  CommandItem,
-  CommandEmpty,
-} from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { Label } from "./ui/label";
+import { useState, useRef } from "react";
 
-const ALL_PLATFORMS = [
-  "LinkedIn",
-  "Indeed",
-  "Glassdoor",
-  "Wellfound",
-  "Dice",
-  "Monster",
-  "ZipRecruiter",
-] as const;
+import { PLATFORMS } from "@/lib/suggestions";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PlatformComboboxProps {
   value: string;
@@ -33,153 +15,136 @@ interface PlatformComboboxProps {
 }
 
 export default function PlatformCombobox({
-  value: propValue,
+  value,
   onChange,
   placeholder = "Job platform",
 }: PlatformComboboxProps) {
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(propValue);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
-  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const popoverRef = useRef<HTMLUListElement>(null);
 
-  // Sync external value
-  useEffect(() => {
-    setInputValue(propValue);
-  }, [propValue]);
-
-  // Filter platforms (trim to ignore spaces)
-  const filtered = ALL_PLATFORMS.filter((platform) =>
-    platform.toLowerCase().includes(inputValue.trim().toLowerCase())
+  const filtered = PLATFORMS.filter((p) =>
+    p.toLowerCase().includes(value.trim().toLowerCase()),
   );
 
-  // Reset selection when input changes
-  useEffect(() => {
-    setSelectedIndex(-1);
-  }, [inputValue]);
-
-  const selectPlatform = (platform: string) => {
-    setInputValue(platform);
+  const handleOptionMouseDown = (e: React.MouseEvent, platform: string) => {
+    e.preventDefault();
     onChange(platform);
     setOpen(false);
     inputRef.current?.focus();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    const trimmedVal = val.trimStart();
-    setInputValue(val);
-    onChange(trimmedVal);
-    if (!open) setOpen(true);
+    onChange(e.target.value);
+    setOpen(true);
   };
 
-  const handleInputFocus = () => {
-    if (filtered.length > 0) setOpen(true);
+  const handleBlur = (e: React.FocusEvent) => {
+    const relatedTarget = e.relatedTarget as Node;
+    if (popoverRef.current?.contains(relatedTarget)) return;
+    setOpen(false);
   };
 
-  // Keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!open) {
+      if (e.key === "ArrowDown" || e.key === "Enter") setOpen(true);
+      return;
+    }
+    if (e.key === "Escape") {
+      setOpen(false);
+      return;
+    }
+
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev < filtered.length - 1 ? prev + 1 : 0));
+      const first = popoverRef.current?.querySelector<HTMLElement>(
+        "[data-platform-item]",
+      );
+      first?.focus();
+    }
+  };
+
+  const handleItemKeyDown = (
+    e: React.KeyboardEvent<HTMLLIElement>,
+    platform: string,
+  ) => {
+    if (e.key === "Enter" || e.key === " ") {
+      onChange(platform);
+      setOpen(false);
+      inputRef.current?.focus();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const next = e.currentTarget.nextElementSibling as HTMLElement;
+      next?.focus();
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : filtered.length - 1));
-    } else if (e.key === "Enter" && selectedIndex >= 0) {
-      e.preventDefault();
-      selectPlatform(filtered[selectedIndex]);
+      const prev = e.currentTarget.previousElementSibling as HTMLElement;
+      if (prev) {
+        prev?.focus();
+      } else {
+        inputRef.current?.focus();
+      }
     } else if (e.key === "Escape") {
       setOpen(false);
       inputRef.current?.focus();
     }
   };
 
-  // Scroll selected item into view
-  useEffect(() => {
-    if (selectedIndex >= 0 && itemsRef.current[selectedIndex]) {
-      itemsRef.current[selectedIndex]?.scrollIntoView({ block: "nearest" });
-    }
-  }, [selectedIndex]);
-
-  // Prevent popover focus stealing
-  const preventFocus = (e: Event) => e.preventDefault();
-
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <div>
-          <Label
-            htmlFor="platform_combobox"
-            className="text-muted-foreground mb-1"
-          >
-            Platform
-          </Label>
-          <div className="relative">
-            <Input
-              ref={inputRef}
-              placeholder={placeholder}
-              value={inputValue}
-              onChange={handleInputChange}
-              onFocus={handleInputFocus}
-              onKeyDown={handleKeyDown}
-              id="platform"
-              className="pr-10 rounded-none bg-white"
-              required
-              onBlur={(e) => {
-                setTimeout(() => {
-                  if (
-                    !e.relatedTarget ||
-                    !e.relatedTarget.closest("[cmdk-item]")
-                  ) {
-                    setOpen(false);
-                  }
-                }, 150);
-              }}
-            />
-            <ChevronsUpDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          </div>
-        </div>
-      </PopoverTrigger>
+    <div className="flex flex-col gap-1">
+      <Label htmlFor="platform" className="text-muted-foreground">
+        Platform
+      </Label>
+      <div className="relative">
+        <Input
+          ref={inputRef}
+          id="platform"
+          placeholder={placeholder}
+          value={value}
+          autoComplete="off"
+          onChange={handleInputChange}
+          onFocus={() => filtered.length > 0 && setOpen(true)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          className="pr-10 rounded-none bg-white"
+          required
+        />
+        <ChevronsUpDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
-      <PopoverContent
-        className="w-(--radix-popover-trigger-width) p-0 max-h-48 overflow-y-auto"
-        align="start"
-        onOpenAutoFocus={preventFocus}
-        onCloseAutoFocus={preventFocus}
-      >
-        <Command shouldFilter={false}>
-          <CommandList>
-            {filtered.length === 0 ? (
-              <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
-                No platform found.
-              </CommandEmpty>
-            ) : (
-              filtered.map((platform, index) => (
-                <CommandItem
-                  key={platform}
-                  ref={(el) => {
-                    itemsRef.current[index] = el;
-                  }}
-                  value={platform}
-                  onSelect={() => selectPlatform(platform)}
-                  className={`cursor-pointer ${
-                    index === selectedIndex
-                      ? "bg-accent text-accent-foreground"
-                      : ""
-                  }`}
-                >
-                  <Check
-                    className={`mr-2 h-4 w-4 ${
-                      inputValue === platform ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                  {platform}
-                </CommandItem>
-              ))
-            )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+        {open && filtered.length > 0 && (
+          <ul
+            ref={popoverRef}
+            className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md overflow-y-auto max-h-48 p-1"
+            role="listbox"
+          >
+            {filtered.map((platform) => (
+              <li
+                key={platform}
+                data-platform-item
+                role="option"
+                aria-selected={value === platform}
+                tabIndex={-1}
+                onMouseDown={(e) => handleOptionMouseDown(e, platform)}
+                onKeyDown={(e) => handleItemKeyDown(e, platform)}
+                className={cn(
+                  "flex items-center gap-2 px-2 py-1.5 rounded-sm text-sm cursor-pointer",
+                  "hover:bg-accent hover:text-accent-foreground",
+                  "focus:bg-accent focus:text-accent-foreground focus:outline-none",
+                  value === platform && "font-medium",
+                )}
+              >
+                <Check
+                  className={cn(
+                    "h-4 w-4",
+                    value === platform ? "opacity-100" : "opacity-0",
+                  )}
+                />
+                {platform}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }
