@@ -6,7 +6,6 @@ import { auth } from "@/lib/firebase";
 import { getAuthErrorMessage } from "@/lib/firebase-errors";
 import { emailRules, passwordRules } from "@/lib/validations";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -21,7 +20,6 @@ interface RegisterFormData {
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const {

@@ -1,17 +1,15 @@
 "use client";
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { getAuthErrorMessage } from "@/lib/firebase-errors";
 import { emailRules, passwordRules } from "@/lib/validations";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { toast } from "sonner";
 import { FormField } from "@/components/auth/FormField";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { login } from "@/lib/auth";
 
 interface LoginFormData {
   email: string;
@@ -20,7 +18,6 @@ interface LoginFormData {
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const {
     register,
@@ -36,9 +33,10 @@ export default function LoginPage() {
   const handleLogin = async (data: LoginFormData) => {
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
-      router.replace("/dashboard");
+      await login(data.email, data.password);
+      window.location.href = "/dashboard";
     } catch (error: any) {
+      console.error("Login error caught:", error.message);
       toast.error(getAuthErrorMessage(error.code));
     } finally {
       setLoading(false);
