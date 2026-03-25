@@ -48,7 +48,7 @@ export default function JobTitleCombobox({
 
   // Filter titles
   const filtered = ALL_TITLES.filter((title) =>
-    title.toLowerCase().includes(inputValue.trim().toLowerCase())
+    title.toLowerCase().includes(inputValue.trim().toLowerCase()),
   );
 
   // Reset selection when input changes

@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { Job } from "@/lib/types";
+import useAuth from "@/hooks/useAuth";
 import { fetchUserJobs } from "@/lib/firebaseUtils";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import AddJobDialog from "@/components/AddJobDialog";
 import {
@@ -18,38 +19,27 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function DashBoardPage() {
-  const [username, setUsername] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, profile, loading } = useAuth();
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobsLoading, setJobsLoading] = useState(true);
   const [showAddJobDialog, setShowAddJobDialog] = useState(false);
 
   const refetchJobs = async () => {
-    const userJobs = await fetchUserJobs();
+    if (!user) return;
+    setJobsLoading(true);
+    const userJobs = await fetchUserJobs(user.uid);
     setJobs(userJobs);
+    setJobsLoading(false);
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) return;
+    if (loading) return;
+    if (!user) return;
 
-        const userSnap = await getDoc(doc(db, "users", user.uid));
-        if (userSnap.exists()) {
-          setUsername(userSnap.data().username || null);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
     refetchJobs();
-  }, []);
+  }, [user, loading]);
 
-  if (loading)
+  if (loading || jobsLoading)
     return (
       <div className="flex h-screen items-center justify-center text-xl">
         Loading dashboard...
@@ -68,7 +58,7 @@ export default function DashBoardPage() {
         <div className="flex flex-col items-center justify-center select-none">
           <h1 className="flex text-2xl font-semibold py-8">
             Welcome, &nbsp;
-            {username}
+            {profile?.username}
           </h1>
         </div>
 
