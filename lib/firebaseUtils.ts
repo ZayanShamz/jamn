@@ -9,16 +9,12 @@ import {
   doc,
   setDoc,
   serverTimestamp,
-  Timestamp,
 } from "firebase/firestore";
 
 // job fetch function
-export async function fetchUserJobs(): Promise<Job[]> {
-  try {
-    const user = auth.currentUser;
-    if (!user) throw new Error("User not authenticated");
-
-    const jobsRef = collection(db, "users", user.uid, "jobs");
+export async function fetchUserJobs(uid: string): Promise<Job[]> {
+  try { 
+    const jobsRef = collection(db, "users", uid, "jobs");
     const q = query(jobsRef, orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
 
@@ -34,7 +30,7 @@ export async function fetchUserJobs(): Promise<Job[]> {
 
 // Job Save function
 export async function saveJob(
-  formData: Omit<Job, "id" | "createdAt" | "updatedAt">
+  formData: Omit<Job, "id" | "createdAt" | "updatedAt">,
 ): Promise<string> {
   const user = auth.currentUser;
   if (!user) throw new Error("User not authenticated");
