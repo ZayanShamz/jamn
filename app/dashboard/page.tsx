@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import type { Job } from "@/lib/types";
 import useAuth from "@/hooks/useAuth";
 import { fetchUserJobs } from "@/lib/firebaseUtils";
-import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import Navbar from "@/components/Navbar";
 import AddJobDialog from "@/components/AddJobDialog";
 import {
